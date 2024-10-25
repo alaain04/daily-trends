@@ -1,6 +1,6 @@
-import { NextFunction, Router, Response, Request } from "express";
+import { Router } from 'express';
 
 export interface IRoute {
-  router: Router;
-  initRoutes: () => void;
+    router: Router;
+    initRoutes: () => void;
 }

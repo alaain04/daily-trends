@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 export interface Logger {
-  info(message: string, meta?: any): void;
-  warn(message: string, meta?: any): void;
-  error(message: string, meta?: any): void;
-  debug?(message: string, meta?: any): void;
+    info(_message: string): void;
+    warn(_message: string): void;
+    error(_message: string): void;
+    debug?(_message: string): void;
 }
