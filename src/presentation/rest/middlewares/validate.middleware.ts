@@ -1,7 +1,7 @@
 import { NextFunction, Response, Request } from 'express';
 import { UnprocessableError } from '../helpers/http-error';
 
-const validateSchema = (
+export const validateSchema = (
     schema: any,
     data: any,
     _res: Response,

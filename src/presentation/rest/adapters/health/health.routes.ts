@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { AppHealthController } from './health.controllers';
+import AppHealthController from './health.controllers';
 import { IRoute } from '../common';
 
 export default class HealthRoutes implements IRoute {
@@ -10,7 +10,7 @@ export default class HealthRoutes implements IRoute {
     }
 
     public initRoutes() {
-        this.router.get('/health/', (req, res) =>
+        this.router.get('/health', (req, res) =>
             this.appHealthController.getHealth(req, res)
         );
     }

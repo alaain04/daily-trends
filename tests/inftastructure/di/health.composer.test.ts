@@ -1,10 +1,14 @@
-// HealthComposer.test.ts
 import HealthComposer from '@src/infrastructure/di/health.composer';
-import { AppHealthController } from '@src/presentation/rest/adapters/health/health.controllers';
-import { GetAppHealthUseCase } from '@src/use-case/health/retrieve-health.use-case';
+import AppHealthController from '@src/presentation/rest/adapters/health/health.controllers';
 
-jest.mock('@src/presentation/rest/adapters/health/health.controllers');
-jest.mock('@src/use-case/health/retrieve-health.use-case');
+jest.mock('@src/presentation/rest/adapters/health/health.controllers', () => ({
+    __esModule: true,
+    default: jest.fn(),
+}));
+jest.mock('@src/use-case/health.use-case', () => ({
+    __esModule: true,
+    default: jest.fn(),
+}));
 
 describe('HealthComposer', () => {
     let healthComposer: HealthComposer;

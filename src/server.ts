@@ -13,6 +13,8 @@ import HealthRoutes from '@src/presentation/rest/adapters/health/health.routes';
 import HealthComposer from '@src/infrastructure/di/health.composer';
 import { loggingMiddleware } from '@src/infrastructure/middlewares/logger.middleware';
 import 'express-async-errors';
+import FeedRoutes from './presentation/rest/adapters/feed/feed.routes';
+import FeedComposer from './infrastructure/di/feed.composer';
 
 export class AppServer {
     app: express.Application = express();
@@ -33,7 +35,9 @@ export class AppServer {
         // Inject Controller into Routes
         const routes: Router[] = [
             new HealthRoutes(new HealthComposer().controller),
+            new FeedRoutes(new FeedComposer().controller),
         ].map((r: IRoute) => r.router);
+
         // Expose routes
         this.app.use(`/api/${config.SERVER_VERSION}`, routes);
 

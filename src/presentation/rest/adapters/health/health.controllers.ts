@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
-import { GetAppHealthUseCase } from '@src/use-case/health/retrieve-health.use-case';
+import AppHealthUseCase from '@src/use-case/health.use-case';
 import { SuccessResponse } from '@src/presentation/rest/helpers/http-response';
 
-export class AppHealthController {
-    constructor(private readonly getAppHealthUseCase: GetAppHealthUseCase) {
-        this.getAppHealthUseCase = getAppHealthUseCase;
+export default class AppHealthController {
+    constructor(private readonly appHealthUseCase: AppHealthUseCase) {
+        this.appHealthUseCase = appHealthUseCase;
     }
 
     async getHealth(_req: Request, res: Response) {
-        const result = await this.getAppHealthUseCase.execute();
+        const result = await this.appHealthUseCase.execute();
         SuccessResponse(res, result);
     }
 }

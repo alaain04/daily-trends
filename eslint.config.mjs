@@ -12,21 +12,10 @@ export default [
   {
     rules: {
       eqeqeq: "off",
-      "no-unused-vars": "error",
       "prefer-const": ["error", { ignoreReadBeforeAssign: true }],
       "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        {
-          "args": "all",
-          "argsIgnorePattern": "^_",
-          "caughtErrors": "all",
-          "caughtErrorsIgnorePattern": "^_",
-          "destructuredArrayIgnorePattern": "^_",
-          "varsIgnorePattern": "^_",
-          "ignoreRestSiblings": true
-        }
-      ]
+      "@typescript-eslint/no-unused-vars": "error",
+      "no-unused-vars": "off"
     },
   },
   {
