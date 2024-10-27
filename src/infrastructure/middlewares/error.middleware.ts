@@ -1,10 +1,10 @@
 import { Response, Request, NextFunction } from 'express';
-import LOGGER from '@infrastructure/helpers/logger';
+import LOGGER from '@src/infrastructure/helpers/logger';
 import {
     HttpCustomError,
     NotFoundError,
     ServerError,
-} from '@presentation/rest/helpers/http-error';
+} from '@src/presentation/rest/helpers/http-error';
 
 interface IErrorResponse {
     message: string;
@@ -36,11 +36,7 @@ export const errorMiddleware = (
     res.status(errorResponse.status).send(responseBody).end();
 };
 
-export const notFoundErrorMiddleware = (
-    _error: HttpCustomError | Error,
-    req: Request,
-    res: Response
-) => {
+export const notFoundErrorMiddleware = (req: Request, res: Response) => {
     const errorResponse = new NotFoundError();
     const responseBody: IErrorResponse = {
         message: errorResponse.errorName,

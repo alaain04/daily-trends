@@ -2,22 +2,22 @@ import * as bodyParser from 'body-parser';
 import express, { Router } from 'express';
 import cors from 'cors';
 import { errors } from 'celebrate';
-import config from '@infrastructure/helpers/config';
+import config from '@src/infrastructure/helpers/config';
 import {
     errorMiddleware,
     notFoundErrorMiddleware,
-} from '@infrastructure/middlewares/error.middleware';
-import { IRoute } from '@presentation/rest/app/common';
-import LOGGER from '@infrastructure/helpers/logger';
-import HealthRoutes from '@presentation/rest/app/health/health.routes';
-import HealthComposer from '@infrastructure/di/health.composer';
-import { loggingMiddleware } from '@infrastructure/middlewares/logger.middleware';
+} from '@src/infrastructure/middlewares/error.middleware';
+import { IRoute } from '@src/presentation/rest/adapters/common';
+import LOGGER from '@src/infrastructure/helpers/logger';
+import HealthRoutes from '@src/presentation/rest/adapters/health/health.routes';
+import HealthComposer from '@src/infrastructure/di/health.composer';
+import { loggingMiddleware } from '@src/infrastructure/middlewares/logger.middleware';
 import 'express-async-errors';
 
 export class AppServer {
-    protected app: express.Application = express();
+    app: express.Application = express();
 
-    createServer() {
+    run() {
         this.app.use(cors());
 
         this.app.use(bodyParser.json());
@@ -28,14 +28,13 @@ export class AppServer {
             res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE');
             next();
         });
+        this.app.use(loggingMiddleware);
 
         // Inject Controller into Routes
         const routes: Router[] = [
             new HealthRoutes(new HealthComposer().controller),
         ].map((r: IRoute) => r.router);
-
         // Expose routes
-        this.app.use(loggingMiddleware);
         this.app.use(`/api/${config.SERVER_VERSION}`, routes);
 
         // Handle JOI validations

@@ -1,10 +1,10 @@
 import winston from 'winston';
 const { combine, timestamp, printf } = winston.format;
-import { Logger } from '@domain/logger/logger.interface';
+import { Logger } from '@src/domain/logger/logger.interface';
 
 class WinstonLogger implements Logger {
     private readonly logger: winston.Logger;
-    private readonly format = printf(({ level, message, timestamp }: any) => {
+    public readonly format = printf(({ level, message, timestamp }: any) => {
         const msg: string =
             typeof message === 'string' ? message : JSON.stringify(message);
         return `${timestamp} [${level.toUpperCase()}] ${msg}`;
@@ -21,16 +21,8 @@ class WinstonLogger implements Logger {
         this.logger.info(message);
     }
 
-    warn(message: string) {
-        this.logger.warn(message);
-    }
-
     error(message: string) {
         this.logger.error(message);
-    }
-
-    debug?(message: string) {
-        this.logger.debug(message);
     }
 }
 
