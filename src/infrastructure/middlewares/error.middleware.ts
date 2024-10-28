@@ -25,14 +25,13 @@ export const errorMiddleware = (
         message: errorResponse.errorName,
         description: 'Something went wrong. Internal error.',
     };
-
     if (error instanceof HttpCustomError) {
         errorResponse = error;
         responseBody.message = error.errorName;
-        responseBody.description = error.message;
+        responseBody.description = error?.message;
     }
 
-    LOGGER.error(error.message);
+    LOGGER.error(error?.message);
     res.status(errorResponse.status).send(responseBody).end();
 };
 

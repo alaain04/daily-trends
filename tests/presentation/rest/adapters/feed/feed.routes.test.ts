@@ -3,11 +3,17 @@ import FeedRoutes from '@src/presentation/rest/adapters/feed/feed.routes';
 import request from 'supertest';
 import express, { Request, Response, NextFunction } from 'express';
 import FeedUseCase from '@src/use-case/feed.use-case';
-import FeedRepositoryImpl from '@src/infrastructure/repositories/feed.repository';
 import ErrorHandler from '@src/infrastructure/helpers/error-handler';
-import { paramsValidator } from '@src/presentation/rest/middlewares/validate.middleware';
+import FeedRepositoryImpl from '@src/infrastructure/database/repositories/feed.repository';
+import NewspaperScraper from '@src/infrastructure/services/scraper/scraper-manager';
+import { LoggerMock } from '@tests/constants';
 
-jest.mock('@src/infrastructure/repositories/feed.repository', () => ({
+jest.mock('@src/infrastructure/services/scraper/scraper-manager', () => ({
+    __esModule: true,
+    default: jest.fn(),
+}));
+
+jest.mock('@src/infrastructure/database/repositories/feed.repository', () => ({
     __esModule: true,
     default: jest.fn(),
 }));
@@ -53,7 +59,12 @@ describe('Feed routes', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         feedController = new FeedController(
-            new FeedUseCase(new FeedRepositoryImpl(), new ErrorHandler())
+            new FeedUseCase(
+                new FeedRepositoryImpl(),
+                new ErrorHandler(),
+                new LoggerMock(),
+                new NewspaperScraper()
+            )
         );
         feedRoutes = new FeedRoutes(feedController);
         // Create server

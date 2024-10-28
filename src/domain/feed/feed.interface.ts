@@ -1,7 +1,9 @@
+import { IBulkInsert } from '../common/bulk-insert';
 import { Crud } from '../crud.interface';
-import { Feed } from './feed.entities';
+import { IFeed } from './feed.entities';
 
-export interface FeedRepository extends Crud<Feed> {
-    findUnique(newspaperId: string, feedId: string): Promise<Feed | null>;
-    retrieveFeedByDate(dateFrom: Date, dateTo: Date): Promise<Feed[]>;
+export interface IFeedRepository extends Crud<IFeed> {
+    findUnique(newspaperId: string, feedId: string): Promise<IFeed | null>;
+    retrieveFeedByDate(dateFrom: Date, dateTo: Date): Promise<IFeed[]>;
+    bulkUpsert(obj: IFeed[]): Promise<IBulkInsert>;
 }

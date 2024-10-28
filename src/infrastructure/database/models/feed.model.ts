@@ -6,7 +6,6 @@ export interface IFeed {
     title: string;
     author: string;
     description: string;
-    publishedAt: Date;
     createdAt: Date;
 }
 
@@ -18,7 +17,6 @@ const FeedSchema: Schema = new Schema<IFeed, FeedModel>({
     title: { type: String, required: true },
     author: { type: String, required: true },
     description: { type: String, required: true },
-    publishedAt: { type: Date, default: Date.now },
     createdAt: { type: Date, default: Date.now },
 });
 

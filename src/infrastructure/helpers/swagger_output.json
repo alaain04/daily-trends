@@ -1,0 +1,190 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "version": "1.0.1",
+        "title": "feed-trends",
+        "description": "CRUD of Feeds. It also scrapes feeds from newspapers and save into a local db"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000/api/v1",
+            "description": ""
+        }
+    ],
+    "paths": {
+        "/feeds": {
+            "get": {
+                "summary": "Retrieve feeds by date",
+                "description": "Get a list of feeds filtered by specific date parameters.",
+                "parameters": [
+                    {
+                        "name": "dateFrom",
+                        "in": "query",
+                        "required": true,
+                        "format": "date",
+                        "description": "Start date for feed filtering (YYYY-MM-DD).",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "dateTo",
+                        "in": "query",
+                        "required": true,
+                        "format": "date",
+                        "description": "End date for feed filtering (YYYY-MM-DD).",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new feed",
+                "description": "Add a new feed with the provided information.",
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Feed"
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        },
+        "/feeds/{id}": {
+            "get": {
+                "summary": "Retrieve a single feed by UUID",
+                "description": "Get details of a specific feed using its UUID.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update an existing feed",
+                "description": "Modify details of an existing feed using its UUID.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Feed"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a feed",
+                "description": "Remove a feed using its UUID.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/feeds/scrape": {
+            "post": {
+                "summary": "Start feed scraping process",
+                "description": "Triggers a scraping process for fetching feeds.",
+                "responses": {
+                    "200": {
+                        "description": "Scraping process started."
+                    },
+                    "500": {
+                        "description": "Error starting scraping process."
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "summary": "Check application health",
+                "description": "Returns the health status of the application",
+                "responses": {
+                    "200": {
+                        "description": "Application is healthy"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Feed": {
+                "type": "object",
+                "properties": {
+                    "newspaperId": {
+                        "type": "string",
+                        "example": "newspaperid"
+                    },
+                    "feedId": {
+                        "type": "string",
+                        "example": "feedid"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Título de la noticia"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Descripción de la noticia"
+                    },
+                    "author": {
+                        "type": "string",
+                        "example": "Garcia Marquez"
+                    }
+                }
+            }
+        }
+    }
+}

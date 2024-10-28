@@ -1,8 +1,8 @@
 import winston from 'winston';
 const { combine, timestamp, printf } = winston.format;
-import { Logger } from '@src/domain/common/logger.interface';
+import { ILogger } from '@src/domain/common/logger.interface';
 
-class WinstonLogger implements Logger {
+class Logger implements ILogger {
     private readonly logger: winston.Logger;
     private readonly format = printf(({ level, message, timestamp }: any) => {
         const msg: string =
@@ -21,9 +21,9 @@ class WinstonLogger implements Logger {
         this.logger.info(message);
     }
 
-    error(message: string) {
-        this.logger.error(message);
+    error(message: string, meta?: any[]) {
+        this.logger.error(message, meta);
     }
 }
 
-export default new WinstonLogger();
+export default new Logger();

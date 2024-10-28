@@ -1,12 +1,35 @@
-import { FeedRepository } from '@src/domain/feed/feed.interface';
+import { IFeedRepository } from '@src/domain/feed/feed.interface';
 import ErrorHandler from '@src/infrastructure/helpers/error-handler';
-import FeedRepositoryImpl from '@src/infrastructure/repositories/feed.repository';
+import FeedRepositoryImpl from '@src/infrastructure/database/repositories/feed.repository';
 import FeedUseCase from '@src/use-case/feed.use-case';
-import { feed, savedFeed } from '@tests/constants';
+import { feed, LoggerMock, savedFeed } from '@tests/constants';
+import NewspaperScraperManager from '@src/infrastructure/services/scraper/scraper-manager';
+
+jest.mock('@src/infrastructure/services/scraper/scraper-manager', () => ({
+    __esModule: true,
+    default: jest.fn().mockImplementation(
+        jest.fn(function () {
+            this.executeScrapers = jest.fn().mockReturnValue({
+                [Symbol.iterator]: function () {
+                    let called = false;
+                    return {
+                        next: () => {
+                            if (!called) {
+                                called = true;
+                                return { value: feed, done: false };
+                            }
+                            return { done: true };
+                        },
+                    };
+                },
+            });
+        })
+    ),
+}));
 
 const returnedError = 'Error thrown by error handler';
 
-jest.mock('@src/infrastructure/repositories/feed.repository', () => ({
+jest.mock('@src/infrastructure/database/repositories/feed.repository', () => ({
     __esModule: true,
     default: jest.fn().mockImplementation(
         jest.fn(function () {
@@ -16,6 +39,7 @@ jest.mock('@src/infrastructure/repositories/feed.repository', () => ({
             this.getById = jest.fn().mockResolvedValue(savedFeed);
             this.findUnique = jest.fn().mockResolvedValue(null);
             this.retrieveFeedByDate = jest.fn().mockResolvedValue([savedFeed]);
+            this.bulkUpsert = jest.fn().mockResolvedValue({ upsertedIds: 0 });
         })
     ),
 }));
@@ -34,17 +58,24 @@ describe('Feed use case', () => {
     let feedRepositoryImplMock =
         FeedRepositoryImpl as jest.Mock<FeedRepositoryImpl>;
     let errorHandlerMock = ErrorHandler as jest.Mock<ErrorHandler>;
+    let scraperServiceMock =
+        NewspaperScraperManager as jest.Mock<NewspaperScraperManager>;
     let handleErrorMock: Function;
-    let feedRepositoryMock: FeedRepository;
+    let executeScraperMock: Function;
+    let feedRepositoryMock: IFeedRepository;
 
     beforeEach(() => {
         jest.clearAllMocks();
         feedUseCase = new FeedUseCase(
             new FeedRepositoryImpl(),
-            new ErrorHandler()
+            new ErrorHandler(),
+            new LoggerMock(),
+            new NewspaperScraperManager()
         );
         handleErrorMock = errorHandlerMock.mock.instances[0].handleError;
         feedRepositoryMock = feedRepositoryImplMock.mock.instances[0];
+        executeScraperMock =
+            scraperServiceMock.mock.instances[0].executeScrapers;
     });
 
     test('should create a feed', async () => {
@@ -238,6 +269,21 @@ describe('Feed use case', () => {
         expect(result).toEqual([savedFeed]);
         expect(retrieveFeedByDate).toHaveBeenCalledWith(dateFrom, dateTo);
         expect(retrieveFeedByDate).toHaveBeenCalledTimes(1);
+        expect(handleErrorMock).toHaveBeenCalledTimes(0);
+    });
+
+    test('should start the scraping process', async () => {
+        // Define
+        const bulkUpsert = feedRepositoryMock.bulkUpsert;
+
+        // Execute
+        const result = await feedUseCase.startScrapingProcess();
+
+        // Assert
+        expect(executeScraperMock).toHaveBeenCalledWith();
+        expect(executeScraperMock).toHaveBeenCalledTimes(1);
+        expect(bulkUpsert).toHaveBeenCalledWith(feed);
+        expect(bulkUpsert).toHaveBeenCalledTimes(1);
         expect(handleErrorMock).toHaveBeenCalledTimes(0);
     });
 });

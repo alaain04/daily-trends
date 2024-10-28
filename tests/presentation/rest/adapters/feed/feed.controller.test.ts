@@ -1,16 +1,23 @@
 import ErrorHandler from '@src/infrastructure/helpers/error-handler';
-import FeedRepositoryImpl from '@src/infrastructure/repositories/feed.repository';
 import FeedController from '@src/presentation/rest/adapters/feed/feed.controllers';
 import { SuccessResponse } from '@src/presentation/rest/helpers/http-response';
 import FeedUseCase from '@src/use-case/feed.use-case';
 import { Request, Response } from 'express';
-import { feed, savedFeed } from '@tests/constants';
+import { feed, LoggerMock, savedFeed } from '@tests/constants';
+import FeedRepositoryImpl from '@src/infrastructure/database/repositories/feed.repository';
+import NewspaperScraper from '@src/infrastructure/services/scraper/scraper-manager';
+
+jest.mock('@src/infrastructure/services/scraper/scraper-manager', () => ({
+    __esModule: true,
+    default: jest.fn(),
+}));
 
 const mockHealth = { message: 'example' };
 const dateRange = {
     dateFrom: new Date().toISOString(),
     dateTo: new Date().toISOString(),
 };
+
 jest.mock('@src/use-case/feed.use-case', () => ({
     __esModule: true,
     default: jest.fn().mockImplementation(
@@ -28,7 +35,7 @@ jest.mock('@src/presentation/rest/helpers/http-response', () => ({
     SuccessResponse: jest.fn(),
 }));
 
-jest.mock('@src/infrastructure/repositories/feed.repository', () => ({
+jest.mock('@src/infrastructure/database/repositories/feed.repository', () => ({
     __esModule: true,
     default: jest.fn(),
 }));
@@ -49,7 +56,9 @@ describe('Feed Controller', () => {
         jest.clearAllMocks();
         feedUseCase = new FeedUseCase(
             new FeedRepositoryImpl(),
-            new ErrorHandler()
+            new ErrorHandler(),
+            new LoggerMock(),
+            new NewspaperScraper()
         );
         feedController = new FeedController(feedUseCase);
         req = {

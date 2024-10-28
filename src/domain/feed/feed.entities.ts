@@ -1,9 +1,8 @@
-export interface Feed {
+export interface IFeed {
     newspaperId: string;
     feedId: string;
     title: string;
     description: string;
     author: string;
-    publishedAt: Date;
-    createdAt: Date;
+    createdAt?: Date;
 }

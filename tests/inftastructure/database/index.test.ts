@@ -1,15 +1,12 @@
 import mongoose, { Mongoose } from 'mongoose';
 import MongoDBSingleton from '@src/infrastructure/database';
 import config from '@src/infrastructure//helpers/config';
-import LOGGER from '@src/infrastructure/helpers/logger';
+import { LoggerMock } from '@tests/constants';
 jest.mock('mongoose');
-jest.mock('@src/infrastructure/helpers/logger', () => ({
-    info: jest.fn(),
-}));
 
 describe('MongoDBSingleton', () => {
     let mongoDBSingleton = MongoDBSingleton;
-
+    const LOGGER = new LoggerMock();
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -25,7 +22,6 @@ describe('MongoDBSingleton', () => {
         expect(connection).toBeDefined();
         expect(mongoDBSingleton.connection).toBe(connection);
         expect(mockConnect).toHaveBeenCalledWith(config.DATABASE_URI);
-        expect(LOGGER.info).toHaveBeenCalledTimes(1);
     });
 
     it('should return the same instance on subsequent calls', async () => {

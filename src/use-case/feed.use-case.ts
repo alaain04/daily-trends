@@ -1,15 +1,19 @@
-import { FeedRepository } from '@src/domain/feed/feed.interface';
-import { Feed } from '@src/domain/feed/feed.entities';
+import { IFeedRepository } from '@src/domain/feed/feed.interface';
+import { IFeed } from '@src/domain/feed/feed.entities';
 import { ICrudUseCase } from './crud.use-case.interface';
 import { IErrorHandler } from '@src/domain/common/error-handler';
+import { ILogger } from '@src/domain/common/logger.interface';
+import { IScraperService } from '@src/domain/common/scraper-service';
 
-export default class FeedUseCase implements ICrudUseCase<Feed> {
+export default class FeedUseCase implements ICrudUseCase<IFeed> {
     constructor(
-        private readonly feedRepository: FeedRepository,
-        private readonly errorHandler: IErrorHandler
+        private readonly feedRepository: IFeedRepository,
+        private readonly errorHandler: IErrorHandler,
+        private readonly logger: ILogger,
+        private readonly scraperService: IScraperService
     ) {}
 
-    async create(feed: Feed): Promise<Feed> {
+    async create(feed: IFeed): Promise<IFeed> {
         const saved = await this.feedRepository.findUnique(
             feed.newspaperId,
             feed.feedId
@@ -23,7 +27,17 @@ export default class FeedUseCase implements ICrudUseCase<Feed> {
         return this.feedRepository.create(feed);
     }
 
-    async update(_id: string, feed: Feed): Promise<Feed | null> {
+    async startScrapingProcess(): Promise<void> {
+        const feedsGenerator = this.scraperService.executeScrapers();
+        for await (const feeds of feedsGenerator) {
+            const bulkResult = await this.feedRepository.bulkUpsert(feeds);
+            this.logger.info(
+                `Total Feeds: ${feeds.length} - Inserted: ${Object.keys(bulkResult.upsertedIds).length}`
+            );
+        }
+    }
+
+    async update(_id: string, feed: IFeed): Promise<IFeed | null> {
         const saved = await this.feedRepository.getById(_id);
         if (!saved)
             throw this.errorHandler.handleError(`ID: ${_id} doesn't exist.`);
@@ -38,7 +52,7 @@ export default class FeedUseCase implements ICrudUseCase<Feed> {
         return updated;
     }
 
-    async delete(_id: string): Promise<Feed | null> {
+    async delete(_id: string): Promise<IFeed | null> {
         const saved = await this.feedRepository.getById(_id);
         if (!saved)
             throw this.errorHandler.handleError(`ID: ${_id} doesn't exist.`);
@@ -52,11 +66,11 @@ export default class FeedUseCase implements ICrudUseCase<Feed> {
         return deleted;
     }
 
-    async getById(_id: string): Promise<Feed | null> {
+    async getById(_id: string): Promise<IFeed | null> {
         return this.feedRepository.getById(_id);
     }
 
-    async getByDates(dateFrom: Date, dateTo: Date): Promise<Feed[]> {
+    async getByDates(dateFrom: Date, dateTo: Date): Promise<IFeed[]> {
         return this.feedRepository.retrieveFeedByDate(dateFrom, dateTo);
     }
 }

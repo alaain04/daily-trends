@@ -1,5 +1,5 @@
 import FeedModel from '@src/infrastructure/database/models/feed.model';
-import FeedRepositoryImpl from '@src/infrastructure/repositories/feed.repository';
+import FeedRepositoryImpl from '@src/infrastructure/database/repositories/feed.repository';
 import { feed } from '@tests/constants';
 
 jest.mock('@src/infrastructure/database/models/feed.model');
@@ -70,6 +70,15 @@ describe('FeedRepositoryImpl', () => {
         });
     });
 
+    it('should insert feeds in bulk mode', async () => {
+        (FeedModel.bulkWrite as jest.Mock).mockResolvedValue({});
+
+        const result = await feedRepository.bulkUpsert([feed]);
+
+        expect(result).toEqual({});
+        expect(FeedModel.bulkWrite).toHaveBeenCalledTimes(1);
+    });
+
     it('should retrieve feeds by date range', async () => {
         const dateFrom = new Date('2024-01-01');
         const dateTo = new Date('2024-12-31');
@@ -83,7 +92,7 @@ describe('FeedRepositoryImpl', () => {
 
         expect(result).toEqual(feeds);
         expect(FeedModel.find).toHaveBeenCalledWith({
-            publishedAt: { $gte: dateFrom, $lte: dateTo },
+            createdAt: { $gte: dateFrom, $lte: dateTo },
         });
     });
 });

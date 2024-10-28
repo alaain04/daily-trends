@@ -13,8 +13,10 @@ import HealthRoutes from '@src/presentation/rest/adapters/health/health.routes';
 import HealthComposer from '@src/infrastructure/di/health.composer';
 import { loggingMiddleware } from '@src/infrastructure/middlewares/logger.middleware';
 import 'express-async-errors';
-import FeedRoutes from './presentation/rest/adapters/feed/feed.routes';
-import FeedComposer from './infrastructure/di/feed.composer';
+import FeedRoutes from '@src/presentation/rest/adapters/feed/feed.routes';
+import FeedComposer from '@src/infrastructure/di/feed.composer';
+import swaggerUi from 'swagger-ui-express';
+import swaggerOutput from '@src/infrastructure/helpers/swagger_output.json';
 
 export class AppServer {
     app: express.Application = express();
@@ -40,6 +42,9 @@ export class AppServer {
 
         // Expose routes
         this.app.use(`/api/${config.SERVER_VERSION}`, routes);
+
+        // Expose swagger
+        this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerOutput));
 
         // Handle JOI validations
         this.app.use(errors());
