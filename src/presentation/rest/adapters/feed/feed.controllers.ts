@@ -3,6 +3,12 @@ import IFeedUseCase from '@src/use-case/feed.use-case';
 import { SuccessResponse } from '@src/presentation/rest/helpers/http-response';
 import { IFeed } from '@src/domain/feed/feed.entities';
 
+type IFeedsQuery = {
+    dateFrom: Date;
+    dateTo: Date;
+    page: number;
+    pageSize: number;
+};
 export default class IFeedController {
     constructor(private readonly feedUseCase: IFeedUseCase) {
         this.feedUseCase = feedUseCase;
@@ -34,10 +40,14 @@ export default class IFeedController {
     }
 
     async retrieveFeedsByDate(req: Request, res: Response) {
-        const dateFrom = new Date(req.query.dateFrom as string);
-        const dateTo = new Date(req.query.dateTo as string);
-
-        const result = await this.feedUseCase.getByDates(dateFrom, dateTo);
+        const { dateFrom, dateTo, page, pageSize } =
+            req.query as unknown as IFeedsQuery;
+        const result = await this.feedUseCase.getByDates(
+            new Date(dateFrom),
+            new Date(dateTo),
+            Number(page),
+            Number(pageSize)
+        );
         SuccessResponse(res, result);
     }
 

@@ -70,7 +70,17 @@ export default class FeedUseCase implements ICrudUseCase<IFeed> {
         return this.feedRepository.getById(_id);
     }
 
-    async getByDates(dateFrom: Date, dateTo: Date): Promise<IFeed[]> {
-        return this.feedRepository.retrieveFeedByDate(dateFrom, dateTo);
+    async getByDates(
+        dateFrom: Date,
+        dateTo: Date,
+        page: number,
+        pageSize: number
+    ): Promise<IFeed[]> {
+        return this.feedRepository.retrieveFeedByDate(
+            dateFrom,
+            dateTo,
+            page,
+            pageSize
+        );
     }
 }

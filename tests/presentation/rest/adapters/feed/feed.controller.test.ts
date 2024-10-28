@@ -13,9 +13,11 @@ jest.mock('@src/infrastructure/services/scraper/scraper-manager', () => ({
 }));
 
 const mockHealth = { message: 'example' };
-const dateRange = {
+const queryParams = {
     dateFrom: new Date().toISOString(),
     dateTo: new Date().toISOString(),
+    page: '0',
+    pageSize: '10',
 };
 
 jest.mock('@src/use-case/feed.use-case', () => ({
@@ -63,7 +65,7 @@ describe('Feed Controller', () => {
         feedController = new FeedController(feedUseCase);
         req = {
             body: feed,
-            query: dateRange,
+            query: queryParams,
             params: { id: savedFeed._id },
         };
         res = {};
@@ -136,8 +138,10 @@ describe('Feed Controller', () => {
         // Assert
         expect(getByDatesUseCaseMock).toHaveBeenCalledTimes(1);
         expect(getByDatesUseCaseMock).toHaveBeenCalledWith(
-            new Date(dateRange.dateFrom),
-            new Date(dateRange.dateTo)
+            new Date(queryParams.dateFrom),
+            new Date(queryParams.dateTo),
+            Number(queryParams.page),
+            Number(queryParams.pageSize)
         );
         expect(SuccessResponse).toHaveBeenCalledTimes(1);
         expect(SuccessResponse).toHaveBeenCalledWith(res, mockHealth);

@@ -36,6 +36,28 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": true,
+                        "format": "number",
+                        "description": "Page number. Default 0.",
+                        "schema": {
+                            "type": "number",
+                            "example": 0
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true,
+                        "format": "number",
+                        "description": "Page size. Default 10.",
+                        "schema": {
+                            "type": "number",
+                            "example": 10
+                        }
                     }
                 ],
                 "responses": {

@@ -55,10 +55,10 @@ jest.mock('@src/infrastructure/helpers/error-handler', () => ({
 
 describe('Feed use case', () => {
     let feedUseCase: FeedUseCase;
-    let feedRepositoryImplMock =
+    const feedRepositoryImplMock =
         FeedRepositoryImpl as jest.Mock<FeedRepositoryImpl>;
-    let errorHandlerMock = ErrorHandler as jest.Mock<ErrorHandler>;
-    let scraperServiceMock =
+    const errorHandlerMock = ErrorHandler as jest.Mock<ErrorHandler>;
+    const scraperServiceMock =
         NewspaperScraperManager as jest.Mock<NewspaperScraperManager>;
     let handleErrorMock: Function;
     let executeScraperMock: Function;
@@ -261,13 +261,24 @@ describe('Feed use case', () => {
         const retrieveFeedByDate = feedRepositoryMock.retrieveFeedByDate;
         const dateFrom = new Date();
         const dateTo = new Date();
-
+        const page = 0;
+        const pageSize = 10;
         // Execute
-        const result = await feedUseCase.getByDates(dateFrom, dateTo);
+        const result = await feedUseCase.getByDates(
+            dateFrom,
+            dateTo,
+            page,
+            pageSize
+        );
 
         // Assert
         expect(result).toEqual([savedFeed]);
-        expect(retrieveFeedByDate).toHaveBeenCalledWith(dateFrom, dateTo);
+        expect(retrieveFeedByDate).toHaveBeenCalledWith(
+            dateFrom,
+            dateTo,
+            page,
+            pageSize
+        );
         expect(retrieveFeedByDate).toHaveBeenCalledTimes(1);
         expect(handleErrorMock).toHaveBeenCalledTimes(0);
     });
@@ -277,7 +288,7 @@ describe('Feed use case', () => {
         const bulkUpsert = feedRepositoryMock.bulkUpsert;
 
         // Execute
-        const result = await feedUseCase.startScrapingProcess();
+        await feedUseCase.startScrapingProcess();
 
         // Assert
         expect(executeScraperMock).toHaveBeenCalledWith();

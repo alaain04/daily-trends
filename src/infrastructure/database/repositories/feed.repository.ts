@@ -39,10 +39,18 @@ export default class FeedRepositoryImpl implements IFeedRepository {
         return FeedModel.findOne({ newspaperId, feedId });
     }
 
-    async retrieveFeedByDate(dateFrom: Date, dateTo: Date): Promise<IFeed[]> {
+    async retrieveFeedByDate(
+        dateFrom: Date,
+        dateTo: Date,
+        page: number,
+        pageSize: number
+    ): Promise<IFeed[]> {
         dateTo.setHours(23, 59, 59, 999);
         return FeedModel.find({
             createdAt: { $gte: dateFrom, $lte: dateTo },
-        });
+        })
+            .skip(page * pageSize)
+            .limit(pageSize)
+            .sort({ createdAt: -1, title: -1 });
     }
 }

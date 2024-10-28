@@ -23,6 +23,8 @@ export const queryParams = Joi.object({
         'any.required': '"dateFrom" is required',
     }),
     dateTo: Joi.date().required().less('now').iso(),
+    page: Joi.number().default(0).min(0).max(1000),
+    pageSize: Joi.number().default(10).min(0).max(200),
 });
 
 export const idParam = Joi.object({

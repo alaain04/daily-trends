@@ -82,12 +82,23 @@ describe('FeedRepositoryImpl', () => {
     it('should retrieve feeds by date range', async () => {
         const dateFrom = new Date('2024-01-01');
         const dateTo = new Date('2024-12-31');
+        const page = 0;
+        const pageSize = 10;
         const feeds = [feed];
-        (FeedModel.find as jest.Mock).mockResolvedValue(feeds);
+        // const findMock = FeedModel.find as jest.Mock;
+        (FeedModel.find as jest.Mock) = jest.fn().mockImplementation(() => ({
+            skip: jest.fn().mockImplementation(() => ({
+                limit: jest.fn().mockImplementation(() => ({
+                    sort: jest.fn().mockResolvedValue([feed]),
+                })),
+            })),
+        }));
 
         const result = await feedRepository.retrieveFeedByDate(
             dateFrom,
-            dateTo
+            dateTo,
+            page,
+            pageSize
         );
 
         expect(result).toEqual(feeds);
