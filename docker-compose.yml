@@ -1,16 +1,16 @@
 version: '3.8'
 
 services:
-  # backend:
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "4000:4000"
-  #   networks:
-  #     challenge_network:
-  #       aliases:
-  #         - backend_alias
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      challenge_network:
+        aliases:
+          - backend_alias
 
   database:
     image: mongodb/mongodb-community-server:latest

@@ -21,7 +21,7 @@ class Logger implements ILogger {
         this.logger.info(message);
     }
 
-    error(message: string, meta?: any[]) {
+    error(message: string, meta?: any) {
         this.logger.error(message, meta);
     }
 }

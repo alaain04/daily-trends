@@ -4,8 +4,8 @@
     "description": "CRUD of feeds. It also scrapes feeds from newspapers and save into a local db",
     "main": "index.js",
     "scripts": {
-        "build": "npx tsc",
-        "serve": "node dist/index.js",
+        "build": "npx tsc --project tsconfig.build.json",
+        "serve": "node dist/src/index.js",
         "dev": "nodemon src/index.ts ",
         "fix:eslint": "npx eslint src",
         "fix:prettier": "npx prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
