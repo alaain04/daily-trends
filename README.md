@@ -51,7 +51,7 @@ Default development url: `http://localhost:3000/docs`
 - Validate and fix the source code using predefined defined prettier rules
     `pnpm fix:prettier`
 - Execute local tests and analyze coverage
-    `pnpm test`
+    `pnpm fix:prettier`
 
 ## Production
 ### Steps to run in prod mode
@@ -62,5 +62,6 @@ Default development url: `http://localhost:3000/docs`
     `pnpm serve`
 
 ### Steps to run the app using Docker
-- Run the backend container. Prerequisite: A database up and running
-    `docker compose --build -d up backend`
+- Run the backend container. Prerequisite: A database up and running.
+- If the database is the same of this docker compose, you have to update the `DATABASE_URI` in `.env` file to `"mongodb://db_alias:27017/daily-trends"`, so the backend container reaches the database ones.
+    `docker compose up backend --build -d`
